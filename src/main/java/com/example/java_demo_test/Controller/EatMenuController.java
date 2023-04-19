@@ -16,11 +16,13 @@ public class EatMenuController {
 	@Autowired
 	private EatMenuService eatMenuService;
 
+	//name,shop,point,price
 	@PostMapping("/add_menu")
 	public EatMenuResponse addMenu(@RequestBody EatMenuRequest eatMenuRequest) {
 		return eatMenuService.addMenu(eatMenuRequest);
 	}
 
+	//name,shop,newpoint,newprice
 	@PostMapping("/henshuu_menu")
 	public EatMenuResponse henshuuMenu(@RequestBody UpdateEatMenuRequest updateReq) {
 		return eatMenuService.henshuuMenu(updateReq);
