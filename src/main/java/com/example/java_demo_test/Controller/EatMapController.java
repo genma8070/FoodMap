@@ -49,7 +49,7 @@ public class EatMapController {
 	public List<ListEatMapResponse> getMapDetailByPoint(@RequestBody ListEatMapResponse listReq) {
 		return eatMapService.getMapDetailByPoint(listReq);
 	}
-
+//123
 	@PostMapping("/delete_date")
 	public EatMapResponse deleteDate(@RequestBody UpdateHyoukaEatMapRequest request) {
 		return eatMapService.deleteDate(request);
