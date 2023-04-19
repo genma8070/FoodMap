@@ -10,6 +10,11 @@ public class ListEatMapResponse {
 	private String menu;
 	private Integer mpoint;
 	private Integer price;
+	private String massage;
+	public ListEatMapResponse(String massage) {
+		super();
+		this.massage = massage;
+	}
 	public String getName() {
 		return name;
 	}
@@ -57,6 +62,12 @@ public class ListEatMapResponse {
 		this.menu = menu;
 		this.price = price;
 		this.mpoint = mpoint;
+	}
+	public String getMassage() {
+		return massage;
+	}
+	public void setMassage(String massage) {
+		this.massage = massage;
 	}
 	
 	

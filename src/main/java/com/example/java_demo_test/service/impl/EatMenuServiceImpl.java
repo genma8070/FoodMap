@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 
 import com.example.java_demo_test.entity.EatMenu;
 import com.example.java_demo_test.entity.MapMenu;
+import com.example.java_demo_test.repository.EatMapDao;
 import com.example.java_demo_test.repository.EatMenuDao;
 import com.example.java_demo_test.service.ifs.EatMenuService;
 import com.example.java_demo_test.vo.EatMenuRequest;
@@ -18,6 +19,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class EatMenuServiceImpl implements EatMenuService {
 	@Autowired
 	private EatMenuDao eatMenuDao;
+	
+	@Autowired
+	private EatMapDao eatMapDao;
+
 
 	@Override
 	public EatMenuResponse addMenu(EatMenuRequest menuReq) {
@@ -30,12 +35,20 @@ public class EatMenuServiceImpl implements EatMenuService {
 			return new EatMenuResponse("資料不能空拉");
 
 		}
+		
+		if (!eatMapDao.existsById(menuReq.getShop())) {
+			{
+				return new EatMenuResponse("無此店家");
+
+			}
+		}
+		
 		if (!(menuReq.getPoint() <= 5) || !(menuReq.getPoint() > 0)) {
 			return new EatMenuResponse("評分必須是1~5");
 		}
 
 		if (menuReq.getPrice() <= 0) {
-			return new EatMenuResponse("價格不得小於0");
+			return new EatMenuResponse("價格不得小於等於0");
 		}
 
 		if (eatMenuDao.existsById(reqMmenu)) {

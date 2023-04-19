@@ -23,4 +23,6 @@ public interface EatMapService {
 	public List<ListEatMapResponse> getMapDetailByPoint(ListEatMapResponse listreq) ;
 	
 	public EatMapResponse deleteDate(UpdateHyoukaEatMapRequest request);
+	
+	
 }

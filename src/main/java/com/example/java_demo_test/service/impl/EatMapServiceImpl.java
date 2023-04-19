@@ -6,8 +6,6 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -35,7 +33,7 @@ public class EatMapServiceImpl implements EatMapService {
 	public EatMapResponse addTenpo(EatMapRequest eatMapRequest) {
 		EatMap reqTenpo = eatMapRequest.getEatMap();
 		// 防呆
-		if (!StringUtils.hasText(reqTenpo.getName())) {
+		if (!StringUtils.hasText(reqTenpo.getName())||!StringUtils.hasText(reqTenpo.getCity())) {
 			return new EatMapResponse("資料不能空拉");
 		}
 		if (eatMapDao.existsById(reqTenpo.getName())) {
@@ -73,6 +71,9 @@ public class EatMapServiceImpl implements EatMapService {
 
 	public EatMapResponse hyoukaShuusei(UpdateHyoukaEatMapRequest request) {
 		// 防呆
+		if (!StringUtils.hasText(request.getName()) || !StringUtils.hasText(request.getCity())) {
+			return new EatMapResponse("資料不能為空");
+		}
 		Optional<EatMap> op = eatMapDao.findById(request.getName());
 		if (!op.isPresent()) {
 			return new EatMapResponse(request.getName(), "沒有此店家");
@@ -133,7 +134,8 @@ public class EatMapServiceImpl implements EatMapService {
 		List<EatMap> result = eatMapDao.findByPointGreaterThanEqualOrderByPointDesc(eatMapRequest.getPoint());
 
 		List<ListEatMapResponse> responseList = new ArrayList<ListEatMapResponse>();
-
+		
+		
 		for (EatMap item : result) {
 			ListEatMapResponse mokuhyo = new ListEatMapResponse();
 			mokuhyo.setCity(item.getCity());
@@ -184,6 +186,9 @@ public class EatMapServiceImpl implements EatMapService {
 	@Transactional
 	public EatMapResponse deleteDate(UpdateHyoukaEatMapRequest request) {
 		// 防呆
+		if (!StringUtils.hasText(request.getName())) {
+			return new EatMapResponse("修改內容不能為空");
+		}
 		Optional<EatMap> op = eatMapDao.findById(request.getName());
 		if (!op.isPresent()) {
 			return new EatMapResponse(request.getName(), "沒有此店家");
