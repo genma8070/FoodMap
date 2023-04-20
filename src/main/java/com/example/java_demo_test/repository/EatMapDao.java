@@ -13,9 +13,9 @@ public interface EatMapDao extends JpaRepository<EatMap, String> {
 
 	List<EatMap> findByCity(String City);
 	
-	Boolean existsByPoint(Integer point);
+	Boolean existsByRate(Integer rate);
 	
-	List<EatMap> findByPointGreaterThanEqualOrderByPointDesc(Integer point);
+	List<EatMap> findByRateGreaterThanEqualOrderByRateDesc(Integer rate);
 
 	
 	

@@ -6,26 +6,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class EatMapResponse {
 	
 	
-	private EatMap eatMap;
-	
-	private String name;
-	
-	
-
-	public EatMapResponse(String name, String message) {
+	public EatMapResponse(EatMap eatMap, String message) {
 		super();
-		this.name = name;
+		this.eatMap = eatMap;
 		this.message = message;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	private EatMap eatMap;
+	
+	private String shop;
+	
 	private String message;
 
 	public EatMap getEatMap() {
@@ -36,6 +26,14 @@ public class EatMapResponse {
 		this.eatMap = eatMap;
 	}
 
+	public String getShop() {
+		return shop;
+	}
+
+	public void setShop(String shop) {
+		this.shop = shop;
+	}
+
 	public String getMessage() {
 		return message;
 	}
@@ -44,14 +42,16 @@ public class EatMapResponse {
 		this.message = message;
 	}
 
-	public EatMapResponse() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public EatMapResponse(EatMap eatMap, String message) {
+	public EatMapResponse(EatMap eatMap, String shop, String message) {
 		super();
 		this.eatMap = eatMap;
+		this.shop = shop;
+		this.message = message;
+	}
+
+	public EatMapResponse(String shop, String message) {
+		super();
+		this.shop = shop;
 		this.message = message;
 	}
 
@@ -60,11 +60,10 @@ public class EatMapResponse {
 		this.message = message;
 	}
 
-	public EatMapResponse(EatMap eatMap) {
+	public EatMapResponse() {
 		super();
-		this.eatMap = eatMap;
+		// TODO Auto-generated constructor stub
 	}
-	
-	
 
+	
 }

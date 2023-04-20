@@ -15,15 +15,15 @@ public interface EatMenuDao extends JpaRepository<EatMenu, MapMenu>{
 	//計算餐點數量
 	int countByShop(String shop);
 	
-	List<EatMenu> findByShop(String name);
+	List<EatMenu> findByShop(String shop);
 	
-	List<EatMenu> findByPointGreaterThan(EatMapRequest eatMapRequest);
+	List<EatMenu> findByRateGreaterThan(EatMapRequest eatMapRequest);
 	
-	List<EatMenu> findByShopAndPointGreaterThanEqualOrderByPointDesc(String name,Integer point);
+	List<EatMenu> findByShopAndRateGreaterThanEqualOrderByRateDesc(String shop,Integer rate);
 	
-	Boolean existsByShop(String name);
+	Boolean existsByShop(String shop);
 	
-	void deleteAllByShop(String name);
+	void deleteAllByShop(String shop);
 	
 	EatMenu findByNameAndShop(String name, String shop);
 	

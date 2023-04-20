@@ -10,27 +10,21 @@ import javax.persistence.Table;
 public class EatMap {
 
 	@Id
-	@Column(name = "name")
-	private String name;
+	@Column(name = "shop")
+	private String shop;
 
 	@Column(name = "city")
 	private String city;
 
-	@Column(name = "point")
-	private int point;
+	@Column(name = "rate")
+	private int rate;
 
-	public String getName() {
-		return name;
+	public String getShop() {
+		return shop;
 	}
 
-	public EatMap(String name, int point) {
-		super();
-		this.name = name;
-		this.point = point;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setShop(String shop) {
+		this.shop = shop;
 	}
 
 	public String getCity() {
@@ -41,24 +35,25 @@ public class EatMap {
 		this.city = city;
 	}
 
-	public int getPoint() {
-		return point;
+	public int getRate() {
+		return rate;
 	}
 
-	public void setPoint(int point) {
-		this.point = point;
+	public void setRate(int rate) {
+		this.rate = rate;
 	}
 
-	public EatMap(String name, String city, int point) {
+	public EatMap(String shop, String city, int rate) {
 		super();
-		this.name = name;
+		this.shop = shop;
 		this.city = city;
-		this.point = point;
+		this.rate = rate;
 	}
 
 	public EatMap() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
 
 }

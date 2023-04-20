@@ -19,7 +19,7 @@ import com.example.java_demo_test.vo.EatMapRequest;
 import com.example.java_demo_test.vo.EatMapResponse;
 import com.example.java_demo_test.vo.ListEatMapResponse;
 import com.example.java_demo_test.vo.UpdateEatMapRequest;
-import com.example.java_demo_test.vo.UpdateHyoukaEatMapRequest;
+import com.example.java_demo_test.vo.UpdateEatMapRateRequest;
 
 @Service
 public class EatMapServiceImpl implements EatMapService {
@@ -30,76 +30,89 @@ public class EatMapServiceImpl implements EatMapService {
 	private EatMenuDao eatMenuDao;
 
 	@Override
-	public EatMapResponse addTenpo(EatMapRequest eatMapRequest) {
-		EatMap reqTenpo = eatMapRequest.getEatMap();
+	public EatMapResponse addShop(EatMapRequest eatMapRequest) {
+		EatMap reqShop = eatMapRequest.getEatMap();
 		// 防呆
-		if (!StringUtils.hasText(reqTenpo.getName())||!StringUtils.hasText(reqTenpo.getCity())) {
-			return new EatMapResponse("資料不能空拉");
+		if (!StringUtils.hasText(reqShop.getShop())||!StringUtils.hasText(reqShop.getCity())) {
+			return new EatMapResponse("資料不能空");
 		}
-		if (eatMapDao.existsById(reqTenpo.getName())) {
+		if (eatMapDao.existsById(reqShop.getShop())) {
 			return new EatMapResponse("此店鋪已存在");
 		}
 		// 存入店鋪
-		eatMapDao.save(reqTenpo);
-		return new EatMapResponse(reqTenpo, "新增店鋪成功");
+		eatMapDao.save(reqShop);
+		return new EatMapResponse(reqShop, "新增店鋪成功");
 	}
 
 	@Override
-	public EatMapResponse tenpoShuusei(UpdateEatMapRequest updatereq) {
-		String reqName = updatereq.getName();
+	public EatMapResponse editShop(UpdateEatMapRequest updatereq) {
+		String reqShop = updatereq.getShop();
 		String reqCity = updatereq.getCity();
 		String reqNewCity = updatereq.getNewcity();
 
 		// 防呆
-		if (!StringUtils.hasText(reqName) || !StringUtils.hasText(reqCity) || !StringUtils.hasText(reqNewCity)) {
+		if (!StringUtils.hasText(reqShop) || !StringUtils.hasText(reqCity) || !StringUtils.hasText(reqNewCity)) {
 			return new EatMapResponse("修改內容不能為空");
 		}
 
-		Optional<EatMap> op = eatMapDao.findById(reqName);
+		Optional<EatMap> op = eatMapDao.findById(reqShop);
 		if (!op.isPresent()) {
-			return new EatMapResponse(reqName, "沒有此店家");
+			return new EatMapResponse(reqShop, "沒有此店家");
 		}
+		
 		EatMap eatMap = op.get();
+		
 		if (!reqCity.equals(eatMap.getCity())) {
-			return new EatMapResponse(reqName, "該店家不在此地區");
+			return new EatMapResponse(reqShop, "該店家不在此地區");
 		}
+		
 		// 存入新店址
 		eatMap.setCity(reqNewCity);
 		eatMapDao.save(eatMap);
-		return new EatMapResponse(reqName, "修改店址成功");
+		return new EatMapResponse(reqShop, "修改店址成功");
 	}
 
-	public EatMapResponse hyoukaShuusei(UpdateHyoukaEatMapRequest request) {
+	public EatMapResponse editRate(UpdateEatMapRateRequest request) {
 		// 防呆
-		if (!StringUtils.hasText(request.getName()) || !StringUtils.hasText(request.getCity())) {
+		if (!StringUtils.hasText(request.getShop()) || !StringUtils.hasText(request.getCity())) {
 			return new EatMapResponse("資料不能為空");
 		}
-		Optional<EatMap> op = eatMapDao.findById(request.getName());
-		if (!op.isPresent()) {
-			return new EatMapResponse(request.getName(), "沒有此店家");
+		
+		if (!eatMenuDao.existsByShop(request.getShop())) {
+			return new EatMapResponse("該店家尚無餐點");
 		}
+		
+		Optional<EatMap> op = eatMapDao.findById(request.getShop());
+		if (!op.isPresent()) {
+			return new EatMapResponse(request.getShop(), "沒有此店家");
+		}
+		
 		EatMap eatMap = op.get();
 		if (!request.getCity().equals(eatMap.getCity())) {
-			return new EatMapResponse(request.getName(), "該店家不在此地區");
+			return new EatMapResponse(request.getShop(), "該店家不在此地區");
 		}
+		
 		// 將要找的店所有的菜單放入LIST
-		var list = eatMenuDao.findAllByShop(request.getName());
+		var list = eatMenuDao.findAllByShop(request.getShop());
+		
 		// 計算店家評價=所有餐點評價的平均
 		int sum = 0;
-		int hyouka = 0;
+		int rate = 0;
+		
 		// 餐點可能有1~3樣，當計算完該店鋪擁有的所有菜單後跳出
 		for (int limit = 0; limit <= 2; limit++) {
 			EatMenu item = list.get(limit);
-			sum += item.getPoint();
+			sum += item.getRate();
 			if (limit == list.size() - 1) {
-				hyouka = sum / list.size();
+				rate = sum / list.size();
 				break;
 			}
 		}
+		
 		// 存入評價
-		eatMap.setPoint(hyouka);
+		eatMap.setRate(rate);
 		eatMapDao.save(eatMap);
-		return new EatMapResponse(request.getName(), "修改評分成功");
+		return new EatMapResponse(request.getShop(), "修改評分成功");
 
 	}
 
@@ -107,76 +120,73 @@ public class EatMapServiceImpl implements EatMapService {
 	public List<ListEatMapResponse> getMapByCity(String City) {
 
 		List<EatMap> result = eatMapDao.findByCity(City);
-
 		List<ListEatMapResponse> responseList = new ArrayList<ListEatMapResponse>();
 
 		for (EatMap item : result) {
-			ListEatMapResponse mokuhyo = new ListEatMapResponse();
-			mokuhyo.setName(item.getName());
-			mokuhyo.setPoint(item.getPoint());
-			responseList.add(mokuhyo);
+			ListEatMapResponse cityMap = new ListEatMapResponse();
+			cityMap.setShop(item.getShop());
+			cityMap.setRate(item.getRate());
+			responseList.add(cityMap);
 
-			List<EatMenu> result2 = eatMenuDao.findByShop(item.getName());
+			List<EatMenu> result2 = eatMenuDao.findByShop(item.getShop());
 			for (EatMenu item2 : result2) {
-				ListEatMapResponse mokuhyo2 = new ListEatMapResponse();
-				mokuhyo2.setMenu(item2.getName());
-				mokuhyo2.setMpoint(item2.getPoint());
-				mokuhyo2.setPrice(item2.getPrice());
-				responseList.add(mokuhyo2);
+				ListEatMapResponse cityMap2 = new ListEatMapResponse();
+				cityMap2.setMenu(item2.getName());
+				cityMap2.setMenurate(item2.getRate());
+				cityMap2.setPrice(item2.getPrice());
+				responseList.add(cityMap2);
 			}
 		}
 		return responseList;
 	}
 
 	@Override
-	public List<ListEatMapResponse> getMapByPoint(EatMapRequest eatMapRequest) {
+	public List<ListEatMapResponse> getMapByRate(EatMapRequest eatMapRequest) {
 
-		List<EatMap> result = eatMapDao.findByPointGreaterThanEqualOrderByPointDesc(eatMapRequest.getPoint());
-
+		List<EatMap> result = eatMapDao.findByRateGreaterThanEqualOrderByRateDesc(eatMapRequest.getRate());
 		List<ListEatMapResponse> responseList = new ArrayList<ListEatMapResponse>();
 		
 		
 		for (EatMap item : result) {
-			ListEatMapResponse mokuhyo = new ListEatMapResponse();
-			mokuhyo.setCity(item.getCity());
-			mokuhyo.setName(item.getName());
-			mokuhyo.setPoint(item.getPoint());
-			responseList.add(mokuhyo);
+			ListEatMapResponse list = new ListEatMapResponse();
+			list.setCity(item.getCity());
+			list.setShop(item.getShop());
+			list.setRate(item.getRate());
+			responseList.add(list);
 
-			List<EatMenu> result2 = eatMenuDao.findByShop(item.getName());
+			List<EatMenu> result2 = eatMenuDao.findByShop(item.getShop());
 			for (EatMenu item2 : result2) {
-				ListEatMapResponse mokuhyo2 = new ListEatMapResponse();
-				mokuhyo2.setMenu(item2.getName());
-				mokuhyo2.setMpoint(item2.getPoint());
-				mokuhyo2.setPrice(item2.getPrice());
-				responseList.add(mokuhyo2);
+				ListEatMapResponse list2 = new ListEatMapResponse();
+				list2.setMenu(item2.getName());
+				list2.setMenurate(item2.getRate());
+				list2.setPrice(item2.getPrice());
+				responseList.add(list2);
 			}
 		}
 		return responseList;
 	}
 
 	@Override
-	public List<ListEatMapResponse> getMapDetailByPoint(ListEatMapResponse listReq) {
+	public List<ListEatMapResponse> getMapDetailByRate(ListEatMapResponse listReq) {
 
-		List<EatMap> result = eatMapDao.findByPointGreaterThanEqualOrderByPointDesc(listReq.getPoint());
-
+		List<EatMap> result = eatMapDao.findByRateGreaterThanEqualOrderByRateDesc(listReq.getRate());
 		List<ListEatMapResponse> responseList = new ArrayList<ListEatMapResponse>();
 
 		for (EatMap item : result) {
-			ListEatMapResponse mokuhyo = new ListEatMapResponse();
-			mokuhyo.setCity(item.getCity());
-			mokuhyo.setName(item.getName());
-			mokuhyo.setPoint(item.getPoint());
-			responseList.add(mokuhyo);
+			ListEatMapResponse list = new ListEatMapResponse();
+			list.setCity(item.getCity());
+			list.setShop(item.getShop());
+			list.setRate(item.getRate());
+			responseList.add(list);
 
-			List<EatMenu> result2 = eatMenuDao.findByShopAndPointGreaterThanEqualOrderByPointDesc(item.getName(),
-					listReq.getMpoint());
+			List<EatMenu> result2 = eatMenuDao.findByShopAndRateGreaterThanEqualOrderByRateDesc(item.getShop(),
+					listReq.getMenurate());
 			for (EatMenu item2 : result2) {
-				ListEatMapResponse mokuhyo2 = new ListEatMapResponse();
-				mokuhyo2.setMenu(item2.getName());
-				mokuhyo2.setMpoint(item2.getPoint());
-				mokuhyo2.setPrice(item2.getPrice());
-				responseList.add(mokuhyo2);
+				ListEatMapResponse list2 = new ListEatMapResponse();
+				list2.setMenu(item2.getName());
+				list2.setMenurate(item2.getRate());
+				list2.setPrice(item2.getPrice());
+				responseList.add(list2);
 			}
 		}
 		return responseList;
@@ -184,22 +194,23 @@ public class EatMapServiceImpl implements EatMapService {
 
 	// 限定刪除範圍
 	@Transactional
-	public EatMapResponse deleteDate(UpdateHyoukaEatMapRequest request) {
+	public EatMapResponse deleteData(UpdateEatMapRateRequest request) {
 		// 防呆
-		if (!StringUtils.hasText(request.getName())) {
+		if (!StringUtils.hasText(request.getShop())) {
 			return new EatMapResponse("修改內容不能為空");
 		}
-		Optional<EatMap> op = eatMapDao.findById(request.getName());
+		
+		Optional<EatMap> op = eatMapDao.findById(request.getShop());
 		if (!op.isPresent()) {
-			return new EatMapResponse(request.getName(), "沒有此店家");
+			return new EatMapResponse(request.getShop(), "沒有此店家");
 		}
-		eatMapDao.deleteById(request.getName());
+		
+		eatMapDao.deleteById(request.getShop());
 
-		if (eatMenuDao.existsByShop(request.getName())) {
-			eatMenuDao.deleteAllByShop(request.getName());
-
+		if (eatMenuDao.existsByShop(request.getShop())) {
+			eatMenuDao.deleteAllByShop(request.getShop());
 		}
-		return new EatMapResponse(request.getName(), "刪除成功");
+		return new EatMapResponse(request.getShop(), "刪除成功");
 	}
 
 }

@@ -4,28 +4,25 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ListEatMapResponse {
-	private String name;
-	private Integer point;
+	private String shop;
+	private Integer rate;
 	private String city;
 	private String menu;
-	private Integer mpoint;
+	private Integer menurate;
 	private Integer price;
 	private String massage;
-	public ListEatMapResponse(String massage) {
-		super();
-		this.massage = massage;
+	
+	public String getShop() {
+		return shop;
 	}
-	public String getName() {
-		return name;
+	public void setShop(String shop) {
+		this.shop = shop;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public Integer getRate() {
+		return rate;
 	}
-	public Integer getPoint() {
-		return point;
-	}
-	public void setPoint(Integer point) {
-		this.point = point;
+	public void setRate(Integer rate) {
+		this.rate = rate;
 	}
 	public String getCity() {
 		return city;
@@ -39,11 +36,11 @@ public class ListEatMapResponse {
 	public void setMenu(String menu) {
 		this.menu = menu;
 	}
-	public Integer getMpoint() {
-		return mpoint;
+	public Integer getMenurate() {
+		return menurate;
 	}
-	public void setMpoint(Integer mpoint) {
-		this.mpoint = mpoint;
+	public void setMenurate(Integer menurate) {
+		this.menurate = menurate;
 	}
 	public Integer getPrice() {
 		return price;
@@ -51,22 +48,18 @@ public class ListEatMapResponse {
 	public void setPrice(Integer price) {
 		this.price = price;
 	}
-	public ListEatMapResponse() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public ListEatMapResponse(String name, Integer point, String menu, Integer price, Integer mpoint) {
-		super();
-		this.name = name;
-		this.point = point;
-		this.menu = menu;
-		this.price = price;
-		this.mpoint = mpoint;
-	}
 	public String getMassage() {
 		return massage;
 	}
 	public void setMassage(String massage) {
+		this.massage = massage;
+	}
+	public ListEatMapResponse() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public ListEatMapResponse(String massage) {
+		super();
 		this.massage = massage;
 	}
 	

@@ -8,11 +8,11 @@ public class EatMapRequest {
 	@JsonProperty("eat_map")
 	private EatMap eatMap;
 
-	private String name;
+	private String shop;
 
 	private String city;
 
-	private Integer point;
+	private Integer rate;
 
 	public EatMap getEatMap() {
 		return eatMap;
@@ -22,12 +22,12 @@ public class EatMapRequest {
 		this.eatMap = eatMap;
 	}
 
-	public String getName() {
-		return name;
+	public String getShop() {
+		return shop;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setShop(String shop) {
+		this.shop = shop;
 	}
 
 	public String getCity() {
@@ -38,13 +38,25 @@ public class EatMapRequest {
 		this.city = city;
 	}
 
-	public Integer getPoint() {
-		return point;
+	public Integer getRate() {
+		return rate;
 	}
 
-	public void setPoint(Integer point) {
-		this.point = point;
+	public void setRate(Integer rate) {
+		this.rate = rate;
 	}
 
-	
+	public EatMapRequest(EatMap eatMap, String shop, String city, Integer rate) {
+		super();
+		this.eatMap = eatMap;
+		this.shop = shop;
+		this.city = city;
+		this.rate = rate;
+	}
+
+	public EatMapRequest() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 }

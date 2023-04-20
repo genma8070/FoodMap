@@ -16,16 +16,16 @@ public class EatMenuController {
 	@Autowired
 	private EatMenuService eatMenuService;
 
-	//name,shop,point,price
+	//POST:name,shop,rate,price
 	@PostMapping("/add_menu")
 	public EatMenuResponse addMenu(@RequestBody EatMenuRequest eatMenuRequest) {
 		return eatMenuService.addMenu(eatMenuRequest);
 	}
 
-	//name,shop,newpoint,newprice
-	@PostMapping("/henshuu_menu")
-	public EatMenuResponse henshuuMenu(@RequestBody UpdateEatMenuRequest updateReq) {
-		return eatMenuService.henshuuMenu(updateReq);
+	//POST:name,shop,newrate,newprice
+	@PostMapping("/edit_menu")
+	public EatMenuResponse editMenu(@RequestBody UpdateEatMenuRequest updateReq) {
+		return eatMenuService.editMenu(updateReq);
 	}
 
 

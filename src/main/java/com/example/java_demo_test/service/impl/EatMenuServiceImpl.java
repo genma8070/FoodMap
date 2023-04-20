@@ -26,24 +26,22 @@ public class EatMenuServiceImpl implements EatMenuService {
 
 	@Override
 	public EatMenuResponse addMenu(EatMenuRequest menuReq) {
-		MapMenu reqMmenu = new MapMenu(menuReq.getName(), menuReq.getShop());
-		EatMenu reqMenu = new EatMenu(menuReq.getName(), menuReq.getShop(), menuReq.getPoint(),
+		MapMenu reqMapMenu = new MapMenu(menuReq.getName(), menuReq.getShop());
+		EatMenu reqMenu = new EatMenu(menuReq.getName(), menuReq.getShop(), menuReq.getRate(),
 				menuReq.getPrice());
 		// 防呆
 		if (!StringUtils.hasText(menuReq.getName()) || !StringUtils.hasText(menuReq.getShop())
-				|| menuReq.getPrice() == null || menuReq.getPoint() == null) {
-			return new EatMenuResponse("資料不能空拉");
-
+				|| menuReq.getPrice() == null || menuReq.getRate() == null) {
+			return new EatMenuResponse("資料不能空");
 		}
 		
 		if (!eatMapDao.existsById(menuReq.getShop())) {
 			{
 				return new EatMenuResponse("無此店家");
-
 			}
 		}
 		
-		if (!(menuReq.getPoint() <= 5) || !(menuReq.getPoint() > 0)) {
+		if (!(menuReq.getRate() <= 5) || !(menuReq.getRate() > 0)) {
 			return new EatMenuResponse("評分必須是1~5");
 		}
 
@@ -51,8 +49,8 @@ public class EatMenuServiceImpl implements EatMenuService {
 			return new EatMenuResponse("價格不得小於等於0");
 		}
 
-		if (eatMenuDao.existsById(reqMmenu)) {
-			return new EatMenuResponse("該店家已有該資料");
+		if (eatMenuDao.existsById(reqMapMenu)) {
+			return new EatMenuResponse("該店家已有該餐點");
 		}
 
 		if (eatMenuDao.countByShop(menuReq.getShop()) >= 3) {
@@ -61,20 +59,19 @@ public class EatMenuServiceImpl implements EatMenuService {
 
 		eatMenuDao.save(reqMenu);
 		return new EatMenuResponse(reqMenu, "新增菜單成功");
-
 	}
 
-	public EatMenuResponse henshuuMenu(UpdateEatMenuRequest updateReq) {
-		MapMenu kaemenu = new MapMenu(updateReq.getName(), updateReq.getShop());
-		EatMenu reqMenu = new EatMenu(updateReq.getName(), updateReq.getShop(), updateReq.getNewpoint(),
+	public EatMenuResponse editMenu(UpdateEatMenuRequest updateReq) {
+		MapMenu changeMenu = new MapMenu(updateReq.getName(), updateReq.getShop());
+		EatMenu reqMenu = new EatMenu(updateReq.getName(), updateReq.getShop(), updateReq.getNewrate(),
 				updateReq.getNewprice());
 		EatMenu oldMenu = eatMenuDao.findByNameAndShop(updateReq.getName(), updateReq.getShop());
 		// 防呆
-		if (reqMenu.getPrice() == null || reqMenu.getPoint() == null) {
+		if (reqMenu.getPrice() == null || reqMenu.getRate() == null) {
 			return new EatMenuResponse("資料不能空拉");
-
 		}
-		if (!(reqMenu.getPoint() <= 5) || !(reqMenu.getPoint() > 0)) {
+		
+		if (!(reqMenu.getRate() <= 5) || !(reqMenu.getRate() > 0)) {
 			return new EatMenuResponse("評分必須是1~5");
 		}
 
@@ -82,15 +79,15 @@ public class EatMenuServiceImpl implements EatMenuService {
 			return new EatMenuResponse("價格不得小於等於0");
 		}
 
-		if (!eatMenuDao.existsById(kaemenu)) {
-			return new EatMenuResponse("無該項資料可修改");
+		if (!eatMenuDao.existsById(changeMenu)) {
+			return new EatMenuResponse("沒有這個菜單");
 		}
 
-		if (oldMenu.getPoint() == reqMenu.getPoint() && oldMenu.getPrice() == reqMenu.getPrice()) {
+		if (oldMenu.getRate() == reqMenu.getRate() && oldMenu.getPrice() == reqMenu.getPrice()) {
 			return new EatMenuResponse("一模一樣");
 
 		}
-		oldMenu.setPoint(reqMenu.getPoint());
+		oldMenu.setRate(reqMenu.getRate());
 		oldMenu.setPrice(reqMenu.getPrice());
 
 		eatMenuDao.save(oldMenu);
