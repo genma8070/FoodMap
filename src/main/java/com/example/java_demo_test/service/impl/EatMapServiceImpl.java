@@ -18,8 +18,8 @@ import com.example.java_demo_test.service.ifs.EatMapService;
 import com.example.java_demo_test.vo.EatMapRequest;
 import com.example.java_demo_test.vo.EatMapResponse;
 import com.example.java_demo_test.vo.ListEatMapResponse;
-import com.example.java_demo_test.vo.UpdateEatMapRequest;
 import com.example.java_demo_test.vo.UpdateEatMapRateRequest;
+import com.example.java_demo_test.vo.UpdateEatMapRequest;
 
 @Service
 public class EatMapServiceImpl implements EatMapService {
@@ -45,22 +45,22 @@ public class EatMapServiceImpl implements EatMapService {
 	}
 
 	@Override
-	public EatMapResponse editShop(UpdateEatMapRequest updatereq) {
-		String reqShop = updatereq.getShop();
-		String reqCity = updatereq.getCity();
-		String reqNewCity = updatereq.getNewcity();
+	public EatMapResponse editShop(UpdateEatMapRequest updateReq) {
+		String reqShop = updateReq.getShop();
+		String reqCity = updateReq.getCity();
+		String reqNewCity = updateReq.getNewcity();
 
 		// 防呆
 		if (!StringUtils.hasText(reqShop) || !StringUtils.hasText(reqCity) || !StringUtils.hasText(reqNewCity)) {
 			return new EatMapResponse("修改內容不能為空");
 		}
 
-		Optional<EatMap> op = eatMapDao.findById(reqShop);
-		if (!op.isPresent()) {
+		Optional<EatMap> shop = eatMapDao.findById(reqShop);
+		if (!shop.isPresent()) {
 			return new EatMapResponse(reqShop, "沒有此店家");
 		}
 		
-		EatMap eatMap = op.get();
+		EatMap eatMap = shop.get();
 		
 		if (!reqCity.equals(eatMap.getCity())) {
 			return new EatMapResponse(reqShop, "該店家不在此地區");
@@ -71,96 +71,47 @@ public class EatMapServiceImpl implements EatMapService {
 		eatMapDao.save(eatMap);
 		return new EatMapResponse(reqShop, "修改店址成功");
 	}
-
-	public EatMapResponse editRate(UpdateEatMapRateRequest request) {
-		// 防呆
-		if (!StringUtils.hasText(request.getShop()) || !StringUtils.hasText(request.getCity())) {
-			return new EatMapResponse("資料不能為空");
-		}
-		
-		if (!eatMenuDao.existsByShop(request.getShop())) {
-			return new EatMapResponse("該店家尚無餐點");
-		}
-		
-		Optional<EatMap> op = eatMapDao.findById(request.getShop());
-		if (!op.isPresent()) {
-			return new EatMapResponse(request.getShop(), "沒有此店家");
-		}
-		
-		EatMap eatMap = op.get();
-		if (!request.getCity().equals(eatMap.getCity())) {
-			return new EatMapResponse(request.getShop(), "該店家不在此地區");
-		}
-		
-		// 將要找的店所有的菜單放入LIST
-		var list = eatMenuDao.findAllByShop(request.getShop());
-		
-		// 計算店家評價=所有餐點評價的平均
-		int sum = 0;
-		int rate = 0;
-		
-		// 餐點可能有1~3樣，當計算完該店鋪擁有的所有菜單後跳出
-		for (int limit = 0; limit <= 2; limit++) {
-			EatMenu item = list.get(limit);
-			sum += item.getRate();
-			if (limit == list.size() - 1) {
-				rate = sum / list.size();
-				break;
-			}
-		}
-		
-		// 存入評價
-		eatMap.setRate(rate);
-		eatMapDao.save(eatMap);
-		return new EatMapResponse(request.getShop(), "修改評分成功");
-
-	}
-
+	
 	@Override
 	public List<ListEatMapResponse> getMapByCity(String City) {
 
-		List<EatMap> result = eatMapDao.findByCity(City);
+		List<EatMap> findShop = eatMapDao.findByCity(City);
 		List<ListEatMapResponse> responseList = new ArrayList<ListEatMapResponse>();
 
-		for (EatMap item : result) {
-			ListEatMapResponse cityMap = new ListEatMapResponse();
-			cityMap.setShop(item.getShop());
-			cityMap.setRate(item.getRate());
-			responseList.add(cityMap);
-
-			List<EatMenu> result2 = eatMenuDao.findByShop(item.getShop());
-			for (EatMenu item2 : result2) {
-				ListEatMapResponse cityMap2 = new ListEatMapResponse();
-				cityMap2.setMenu(item2.getName());
-				cityMap2.setMenurate(item2.getRate());
-				cityMap2.setPrice(item2.getPrice());
-				responseList.add(cityMap2);
+		for (EatMap cityMap : findShop) {
+			List<EatMenu> findMenu = eatMenuDao.findByShop(cityMap.getShop());
+			
+			for (EatMenu shopMenu : findMenu) {
+				ListEatMapResponse allMenu = new ListEatMapResponse();
+				allMenu.setShop(cityMap.getShop());
+				allMenu.setRate(cityMap.getRate());
+				allMenu.setMenu(shopMenu.getName());
+				allMenu.setMenurate(shopMenu.getRate());
+				allMenu.setPrice(shopMenu.getPrice());
+				responseList.add(allMenu);
 			}
 		}
 		return responseList;
 	}
-
+	
 	@Override
 	public List<ListEatMapResponse> getMapByRate(EatMapRequest eatMapRequest) {
 
-		List<EatMap> result = eatMapDao.findByRateGreaterThanEqualOrderByRateDesc(eatMapRequest.getRate());
+		List<EatMap> findShop = eatMapDao.findByRateGreaterThanEqualOrderByRateDesc(eatMapRequest.getRate());
 		List<ListEatMapResponse> responseList = new ArrayList<ListEatMapResponse>();
-		
-		
-		for (EatMap item : result) {
-			ListEatMapResponse list = new ListEatMapResponse();
-			list.setCity(item.getCity());
-			list.setShop(item.getShop());
-			list.setRate(item.getRate());
-			responseList.add(list);
-
-			List<EatMenu> result2 = eatMenuDao.findByShop(item.getShop());
-			for (EatMenu item2 : result2) {
-				ListEatMapResponse list2 = new ListEatMapResponse();
-				list2.setMenu(item2.getName());
-				list2.setMenurate(item2.getRate());
-				list2.setPrice(item2.getPrice());
-				responseList.add(list2);
+			
+		for (EatMap rateMap : findShop) {
+			
+			List<EatMenu> findMenu = eatMenuDao.findByShop(rateMap.getShop());
+			for (EatMenu shopMenu : findMenu) {
+				ListEatMapResponse allMenu = new ListEatMapResponse();
+				allMenu.setCity(rateMap.getCity());
+				allMenu.setShop(rateMap.getShop());
+				allMenu.setRate(rateMap.getRate());
+				allMenu.setMenu(shopMenu.getName());
+				allMenu.setMenurate(shopMenu.getRate());
+				allMenu.setPrice(shopMenu.getPrice());
+				responseList.add(allMenu);
 			}
 		}
 		return responseList;
@@ -169,24 +120,22 @@ public class EatMapServiceImpl implements EatMapService {
 	@Override
 	public List<ListEatMapResponse> getMapDetailByRate(ListEatMapResponse listReq) {
 
-		List<EatMap> result = eatMapDao.findByRateGreaterThanEqualOrderByRateDesc(listReq.getRate());
+		List<EatMap> findShop = eatMapDao.findByRateGreaterThanEqualOrderByRateDesc(listReq.getRate());
 		List<ListEatMapResponse> responseList = new ArrayList<ListEatMapResponse>();
 
-		for (EatMap item : result) {
-			ListEatMapResponse list = new ListEatMapResponse();
-			list.setCity(item.getCity());
-			list.setShop(item.getShop());
-			list.setRate(item.getRate());
-			responseList.add(list);
-
-			List<EatMenu> result2 = eatMenuDao.findByShopAndRateGreaterThanEqualOrderByRateDesc(item.getShop(),
+		for (EatMap rateMap : findShop) {
+			
+			List<EatMenu> findMenu = eatMenuDao.findByShopAndRateGreaterThanEqualOrderByRateDesc(rateMap.getShop(),
 					listReq.getMenurate());
-			for (EatMenu item2 : result2) {
-				ListEatMapResponse list2 = new ListEatMapResponse();
-				list2.setMenu(item2.getName());
-				list2.setMenurate(item2.getRate());
-				list2.setPrice(item2.getPrice());
-				responseList.add(list2);
+			for (EatMenu rateMenu : findMenu) {
+				ListEatMapResponse allMenu = new ListEatMapResponse();
+				allMenu.setCity(rateMap.getCity());
+				allMenu.setShop(rateMap.getShop());
+				allMenu.setRate(rateMap.getRate());
+				allMenu.setMenu(rateMenu.getName());
+				allMenu.setMenurate(rateMenu.getRate());
+				allMenu.setPrice(rateMenu.getPrice());
+				responseList.add(allMenu);
 			}
 		}
 		return responseList;
@@ -197,11 +146,11 @@ public class EatMapServiceImpl implements EatMapService {
 	public EatMapResponse deleteData(UpdateEatMapRateRequest request) {
 		// 防呆
 		if (!StringUtils.hasText(request.getShop())) {
-			return new EatMapResponse("修改內容不能為空");
+			return new EatMapResponse("輸入不能為空");
 		}
 		
-		Optional<EatMap> op = eatMapDao.findById(request.getShop());
-		if (!op.isPresent()) {
+		Optional<EatMap> shop = eatMapDao.findById(request.getShop());
+		if (!shop.isPresent()) {
 			return new EatMapResponse(request.getShop(), "沒有此店家");
 		}
 		

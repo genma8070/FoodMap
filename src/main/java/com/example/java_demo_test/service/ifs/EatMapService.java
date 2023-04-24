@@ -5,16 +5,13 @@ import java.util.List;
 import com.example.java_demo_test.vo.EatMapRequest;
 import com.example.java_demo_test.vo.EatMapResponse;
 import com.example.java_demo_test.vo.ListEatMapResponse;
-import com.example.java_demo_test.vo.UpdateEatMapRequest;
 import com.example.java_demo_test.vo.UpdateEatMapRateRequest;
+import com.example.java_demo_test.vo.UpdateEatMapRequest;
 
 public interface EatMapService {
 	public EatMapResponse addShop(EatMapRequest eatMapRequest);
 
 	public EatMapResponse editShop(UpdateEatMapRequest updateEatMapRequest);
-
-	public EatMapResponse editRate(UpdateEatMapRateRequest updateEatMapRateRequest);
-
 	
 	public List<ListEatMapResponse> getMapByCity(String city);
 	

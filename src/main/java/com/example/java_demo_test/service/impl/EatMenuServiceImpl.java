@@ -1,9 +1,12 @@
 package com.example.java_demo_test.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.example.java_demo_test.entity.EatMap;
 import com.example.java_demo_test.entity.EatMenu;
 import com.example.java_demo_test.entity.MapMenu;
 import com.example.java_demo_test.repository.EatMapDao;
@@ -19,28 +22,26 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class EatMenuServiceImpl implements EatMenuService {
 	@Autowired
 	private EatMenuDao eatMenuDao;
-	
+
 	@Autowired
 	private EatMapDao eatMapDao;
-
 
 	@Override
 	public EatMenuResponse addMenu(EatMenuRequest menuReq) {
 		MapMenu reqMapMenu = new MapMenu(menuReq.getName(), menuReq.getShop());
-		EatMenu reqMenu = new EatMenu(menuReq.getName(), menuReq.getShop(), menuReq.getRate(),
-				menuReq.getPrice());
+		EatMenu reqMenu = new EatMenu(menuReq.getName(), menuReq.getShop(), menuReq.getRate(), menuReq.getPrice());
 		// 防呆
 		if (!StringUtils.hasText(menuReq.getName()) || !StringUtils.hasText(menuReq.getShop())
 				|| menuReq.getPrice() == null || menuReq.getRate() == null) {
 			return new EatMenuResponse("資料不能空");
 		}
-		
+
 		if (!eatMapDao.existsById(menuReq.getShop())) {
 			{
 				return new EatMenuResponse("無此店家");
 			}
 		}
-		
+
 		if (!(menuReq.getRate() <= 5) || !(menuReq.getRate() > 0)) {
 			return new EatMenuResponse("評分必須是1~5");
 		}
@@ -58,7 +59,32 @@ public class EatMenuServiceImpl implements EatMenuService {
 		}
 
 		eatMenuDao.save(reqMenu);
-		return new EatMenuResponse(reqMenu, "新增菜單成功");
+
+		// 尋找要修改的店舖
+		Optional<EatMap> shop = eatMapDao.findById(menuReq.getShop());
+		EatMap shopRate = shop.get();
+		// 將要找的店所有的菜單放入LIST
+		var list = eatMenuDao.findAllByShop(menuReq.getShop());
+		// 計算店家評價=所有餐點評價的平均
+		int sum = 0;
+		int rate = 0;
+
+		// 餐點可能有1~3樣，當計算完該店鋪擁有的所有菜單後跳出
+		for (int limit = 0; limit <= 2; limit++) {
+			EatMenu item = list.get(limit);
+			sum += item.getRate();
+			if (limit == list.size() - 1) {
+				rate = sum / list.size();
+				break;
+			}
+		}
+
+		// 存入評價
+//		EatMap shopRate = new EatMap();
+		shopRate.setRate(rate);
+		eatMapDao.save(shopRate);
+		return new EatMenuResponse(menuReq.getShop(), "追加菜單並修改店家評分成功");
+
 	}
 
 	public EatMenuResponse editMenu(UpdateEatMenuRequest updateReq) {
@@ -70,7 +96,7 @@ public class EatMenuServiceImpl implements EatMenuService {
 		if (reqMenu.getPrice() == null || reqMenu.getRate() == null) {
 			return new EatMenuResponse("資料不能空拉");
 		}
-		
+
 		if (!(reqMenu.getRate() <= 5) || !(reqMenu.getRate() > 0)) {
 			return new EatMenuResponse("評分必須是1~5");
 		}

@@ -1,5 +1,7 @@
 package com.example.java_demo_test.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,6 +26,7 @@ public class EatMenu {
 	
 	@Column(name = "price")
 	private Integer price;
+	
 
 	public String getName() {
 		return name;
@@ -69,5 +72,7 @@ public class EatMenu {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	
 
 }

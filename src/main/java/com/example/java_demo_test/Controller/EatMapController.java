@@ -32,12 +32,6 @@ public class EatMapController {
 		return eatMapService.editShop(updateRequest);
 	}
 
-	//POST:shop,city
-	@PostMapping("/edit_rate")
-	public EatMapResponse editRate(@RequestBody UpdateEatMapRateRequest updateRequest) {
-		return eatMapService.editRate(updateRequest);
-	}
-
 	//POST:city
 	@PostMapping("/by_city")
 	public List<ListEatMapResponse> findByCity(@RequestBody EatMapRequest eatMapRequest) {
