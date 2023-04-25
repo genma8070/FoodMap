@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.java_demo_test.entity.EatMenu;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+//メニュー用リスポンス
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EatMenuResponse {
 
@@ -45,8 +46,7 @@ public class EatMenuResponse {
 	}
 
 	public EatMenuResponse() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public EatMenu getEatMenu() {

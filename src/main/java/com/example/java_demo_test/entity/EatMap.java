@@ -5,17 +5,21 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+//店舗を代表するクラス
 @Entity
 @Table(name = "eat_map")
 public class EatMap {
 
+	//店舗の名前
 	@Id
 	@Column(name = "shop")
 	private String shop;
 
+	//店舗の所在地
 	@Column(name = "city")
 	private String city;
 
+	//店舗の評価
 	@Column(name = "rate")
 	private int rate;
 
@@ -51,8 +55,7 @@ public class EatMap {
 	}
 
 	public EatMap() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 

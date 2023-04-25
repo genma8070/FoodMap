@@ -2,6 +2,7 @@ package com.example.java_demo_test.vo;
 
 import com.example.java_demo_test.entity.EatMenu;
 
+//メニュー用リクエスト
 public class EatMenuRequest {
 	private EatMenu eatMenu;
 	private String name;
@@ -39,8 +40,7 @@ public class EatMenuRequest {
 		this.rate = rate;
 	}
 	public EatMenuRequest() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public EatMenuRequest(EatMenu eatMenu, String name, String shop, Integer price, Integer rate) {
 		super();

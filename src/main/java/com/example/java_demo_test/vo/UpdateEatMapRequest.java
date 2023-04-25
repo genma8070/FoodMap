@@ -3,13 +3,13 @@ package com.example.java_demo_test.vo;
 import com.example.java_demo_test.entity.EatMap;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+//店舗更新用リクエスト
 public class UpdateEatMapRequest {
 	@JsonProperty("update_eat_map")
 	private EatMap eatMap;
 
 	public UpdateEatMapRequest() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public EatMap getEatMap() {

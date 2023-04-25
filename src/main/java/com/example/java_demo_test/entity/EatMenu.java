@@ -8,22 +8,28 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+
+//メニューを代表するクラス
 @Entity
 @Table(name = "eat_menu")
 @IdClass(value = MapMenu.class)
 public class EatMenu {
 	
+	//メニューの名前
 	@Id
 	@Column(name = "name")
 	private String name;
 	
+	//メニューが属する店舗の名前
 	@Id
 	@Column(name = "shop")
 	private String shop;
 	
+	//メニューの評価
 	@Column(name = "rate")
 	private Integer rate;
 	
+	//メニューの値段
 	@Column(name = "price")
 	private Integer price;
 	
@@ -69,8 +75,7 @@ public class EatMenu {
 	}
 
 	public EatMenu() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	

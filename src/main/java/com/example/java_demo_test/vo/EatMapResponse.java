@@ -2,9 +2,10 @@ package com.example.java_demo_test.vo;
 
 import com.example.java_demo_test.entity.EatMap;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+//店舗用リスポンス
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EatMapResponse {
-	
 	
 	public EatMapResponse(EatMap eatMap, String message) {
 		super();
@@ -61,8 +62,7 @@ public class EatMapResponse {
 	}
 
 	public EatMapResponse() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	

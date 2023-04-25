@@ -2,6 +2,7 @@ package com.example.java_demo_test.vo;
 
 import com.example.java_demo_test.entity.EatMap;
 
+//店の評価を更新用リクエスト
 public class UpdateEatMapRateRequest {
 
 	private EatMap eatMap;

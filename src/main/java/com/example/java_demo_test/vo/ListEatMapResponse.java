@@ -2,6 +2,7 @@ package com.example.java_demo_test.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+//リストタイプのリターンを使うリスポンス
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ListEatMapResponse {
 	private String shop;
@@ -55,8 +56,7 @@ public class ListEatMapResponse {
 		this.massage = massage;
 	}
 	public ListEatMapResponse() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public ListEatMapResponse(String massage) {
 		super();

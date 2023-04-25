@@ -1,10 +1,10 @@
 package com.example.java_demo_test.vo;
 
+//メニュー更新用リクエスト
 public class UpdateEatMenuRequest {
 
 	public UpdateEatMenuRequest() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	private String name;

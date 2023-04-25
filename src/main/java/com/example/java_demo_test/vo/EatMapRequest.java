@@ -3,6 +3,7 @@ package com.example.java_demo_test.vo;
 import com.example.java_demo_test.entity.EatMap;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+//店舗用のリクエスト
 public class EatMapRequest {
 
 	@JsonProperty("eat_map")
@@ -46,6 +47,12 @@ public class EatMapRequest {
 		this.rate = rate;
 	}
 
+	public EatMapRequest(String shop, String city) {
+		super();
+		this.shop = shop;
+		this.city = city;
+	}
+
 	public EatMapRequest(EatMap eatMap, String shop, String city, Integer rate) {
 		super();
 		this.eatMap = eatMap;
@@ -55,8 +62,7 @@ public class EatMapRequest {
 	}
 
 	public EatMapRequest() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

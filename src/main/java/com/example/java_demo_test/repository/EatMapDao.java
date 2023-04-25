@@ -12,10 +12,10 @@ import com.example.java_demo_test.vo.ListEatMapResponse;
 @Repository
 public interface EatMapDao extends JpaRepository<EatMap, String> {
 
+	//地域によってデータを探す
 	List<EatMap> findByCity(String City);
 	
-	Boolean existsByRate(Integer rate);
-	
+	//輸入した評価以上（含む）によってデータを探す、そして評価が高い順から並びます
 	List<EatMap> findByRateGreaterThanEqualOrderByRateDesc(Integer rate);
 
 	
